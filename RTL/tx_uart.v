@@ -4,9 +4,9 @@
 // Engineer: 
 // 
 // Create Date: 30.08.2024 22:45:46
-// Design Name: 
+// Design Name: Rohit Vijay Gupta
 // Module Name: tx_uart
-// Project Name: 
+// Project Name: Transmitter
 // Target Devices: 
 // Tool Versions: 
 // Description: 
