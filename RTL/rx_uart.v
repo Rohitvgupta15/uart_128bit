@@ -4,9 +4,9 @@
 // Engineer: 
 // 
 // Create Date: 30.08.2024 22:57:25
-// Design Name: 
+// Design Name: Rohit Vijay Gupta
 // Module Name: rx_uart
-// Project Name: 
+// Project Name: recevier
 // Target Devices: 
 // Tool Versions: 
 // Description: 
