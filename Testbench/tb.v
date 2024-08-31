@@ -4,9 +4,9 @@
 // Engineer: 
 // 
 // Create Date: 30.08.2024 23:28:57
-// Design Name: 
-// Module Name: tb
-// Project Name: 
+// Design Name: Rohit Vijay Gupta 
+// Module Name: tb_uart
+// Project Name: uart
 // Target Devices: 
 // Tool Versions: 
 // Description: 
@@ -19,9 +19,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
-module tb_topmodule;
+module tb_top_module;
     reg clk_tb;
+    reg reset_tb;
     reg en_tx_tb;
     reg en_rx_tb;
     reg [127:0] data_in_tb;
@@ -31,6 +31,7 @@ module tb_topmodule;
 
     top_module uut (
         .clk(clk_tb),
+        .reset(reset_tb),
         .en_tx(en_tx_tb),
         .en_rx(en_rx_tb),
         .data_in(data_in_tb),
@@ -39,36 +40,49 @@ module tb_topmodule;
         .data_out(data_out_tb)
     );
 
-    // Clock generation
     initial begin
         clk_tb = 0;
-        forever #5 clk_tb = ~clk_tb; // 10ns period clock
+        forever #5 clk_tb = ~clk_tb; 
     end
 
-    // Test sequence
+    task perform_tx_rx;
+        input [127:0] data_in_task;
+        begin
+
+            reset_tb = 1;
+            #150 reset_tb = 0; // 150 is must 
+
+            data_in_tb = data_in_task;
+            en_tx_tb = 1;
+            en_rx_tb = 1;
+            
+            #2000; 
+            
+            $display("Time = %0t | Test with input = %h | Received data_out = %h", $time, data_in_task, data_out_tb);
+                    
+        end
+    endtask
+
     initial begin
-        // Initialize inputs
+        reset_tb = 1;
         en_tx_tb = 0;
         en_rx_tb = 0;
-        data_in_tb = 128'h00112233445566778899aabbccddeeff;
+        data_in_tb = 128'h0;
 
-        // Start transmission and reception
-        #10 en_tx_tb = 1; en_rx_tb = 1;
-        wait(u_tx_done_tb == 1); // Wait for transmission to complete
-        
-//        #10 en_rx_tb = 0; // Stop reception
-//        wait(u_rx_done_tb == 1); // Wait for reception to complete
+        #20 reset_tb = 0;
 
-//        // Check data_out
-        #10;
-        $display("Received data_out: %h", data_out_tb);
+        // Test Case 1
+        #10 perform_tx_rx(128'h00112233445566778899aabbccddeeff);
 
-        // End simulation
-        #1790;
+        // Test Case 2
+        #150 perform_tx_rx(128'hffeeddccbbaa99887766554433221100);
+
+        // Test Case 3
+        #150 perform_tx_rx(128'h0123456789abcdef0123456789abcdef);
+
         $finish;
     end
 
-    // Monitor
     initial begin
         $monitor("Time = %0t | data_in_tb = %h | u_tx_done_tb = %b | u_rx_done_tb = %b | data_out_tb = %h", 
                  $time, data_in_tb, u_tx_done_tb, u_rx_done_tb, data_out_tb);
