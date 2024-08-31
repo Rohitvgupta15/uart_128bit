@@ -22,12 +22,12 @@
 
 module tx_uart(
     input clk,
+    input reset, 
     input [127:0] data_in,
     input en_tx,
     output u_tx,
     output u_tx_done
     );
-    
     
     wire uart_tx;              
     wire [7:0] uart_slave_data; 
@@ -35,14 +35,12 @@ module tx_uart(
     reg [3:0] count;
     reg tx_en;               
     
-    initial begin
-        shift = 128'b0;
-        count = 4'b0;
-        tx_en = 1'b0;
-    end
-    
-    always @(posedge clk) begin
-        if (en_tx) begin
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            shift <= 128'b0;
+            count <= 4'b0;
+            tx_en <= 1'b0;
+        end else if (en_tx) begin
             if (u_tx_done) begin
                 if (count < 4'd15) begin
                     shift <= shift << 8; //left shift
